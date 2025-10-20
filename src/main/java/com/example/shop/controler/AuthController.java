@@ -17,15 +17,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
 @AllArgsConstructor
-public class AuthControler {
+public class
+AuthController {
 private final AuthenticationManager authenticationManager;
 private final JwtService jwtService;
 private final JwtConfig jwtConfig;

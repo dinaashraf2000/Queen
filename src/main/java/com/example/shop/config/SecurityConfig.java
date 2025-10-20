@@ -1,10 +1,15 @@
 package com.example.shop.config;
 
+import com.example.shop.entities.Role;
+import com.example.shop.filters.JwtAuthentiicationFilter;
 import com.example.shop.services.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -17,14 +22,22 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.HttpRequestHandler;
+
+import java.nio.file.AccessDeniedException;
 
 @Configuration
 @EnableWebSecurity
 @AllArgsConstructor
 public class SecurityConfig {
     private final UserDetailsService userDetailsService;
+    private final JwtAuthentiicationFilter jwtAuthentiicationFilter;
     @Bean
     public PasswordEncoder passwordEncoder() {
+
         return new BCryptPasswordEncoder();
     }
     @Bean
@@ -48,9 +61,19 @@ http.sessionManagement(c->c.sessionCreationPolicy(SessionCreationPolicy.STATELES
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(
                 c->c.requestMatchers("/carts/**").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/users")
-                        .permitAll().requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
+                        .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.POST,"/users").permitAll()
+                        .requestMatchers("/users/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/auth/refresh").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/orders/**").permitAll()
                         .anyRequest().authenticated())
+        .addFilterBefore(jwtAuthentiicationFilter, UsernamePasswordAuthenticationFilter.class)
+        .exceptionHandling(c->
+        {c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+            .accessDeniedHandler((request, response, accessDeniedException) ->
+                    response.setStatus(HttpStatus.FORBIDDEN.value()));
+        })
 ;
 return http.build();
     }

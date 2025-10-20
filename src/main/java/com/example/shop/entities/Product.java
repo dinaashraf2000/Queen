@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Getter
@@ -34,6 +35,6 @@ public class Product {
     private Category category;
 
     @ManyToMany(mappedBy = "products")
-    private Set<User> users = new HashSet<>();
+    private Set<User> users = new LinkedHashSet<>();
 
 }
