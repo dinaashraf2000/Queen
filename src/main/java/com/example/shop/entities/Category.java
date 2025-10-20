@@ -21,6 +21,6 @@ public class Category {
     private String name;
 
     @OneToMany(mappedBy = "category")
-    private Set<Product> products = new HashSet<>();
+    private Set<Product> products = new LinkedHashSet<>();
 
 }

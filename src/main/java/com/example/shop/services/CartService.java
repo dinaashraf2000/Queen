@@ -11,6 +11,7 @@ import com.example.shop.mappers.CartMapper;
 import com.example.shop.repositories.CartRepository;
 import com.example.shop.repositories.ProductRepository;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class CartService {
     final private CartRepository cartRepository;
     final private CartMapper cartMapper;
@@ -89,7 +90,7 @@ public class CartService {
         cart.removeItem(productId);
         cartRepository.save(cart);
     }
-    public void deleteallCartItems( UUID cartId) {
+    public void clearCart( UUID cartId) {
 
         var cart = cartRepository.findById(cartId).orElse(null);
         if (cart == null) {

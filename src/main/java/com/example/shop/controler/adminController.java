@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/admin")
 @AllArgsConstructor
-public class adminControler {
+
+public class adminController {
     @GetMapping("/home")
     public String home(){
         return "hallo";

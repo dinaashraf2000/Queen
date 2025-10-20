@@ -1,11 +1,11 @@
 package com.example.shop.controler;
 
-import com.example.shop.dtos.AddItemToCartRequest;
-import com.example.shop.dtos.CartDto;
-import com.example.shop.dtos.CartItemDto;
-import com.example.shop.dtos.UpdateItemRequest;
+import com.example.shop.dtos.*;
 import com.example.shop.entities.Cart;
 import com.example.shop.entities.CartItem;
+import com.example.shop.exceptions.CartEmptyException;
+import com.example.shop.exceptions.NotFoundCartException;
+import com.example.shop.exceptions.NotFoundProductException;
 import com.example.shop.mappers.CartMapper;
 import com.example.shop.repositories.CartRepository;
 import com.example.shop.repositories.ProductRepository;
@@ -66,8 +66,14 @@ public ResponseEntity<Void> deleteCartItem(@PathVariable UUID cartId,@PathVariab
     @DeleteMapping("/{cartId}/items")
     public ResponseEntity<Void> deleteallCartItems(@PathVariable UUID cartId) {
 
-       cartService.deleteallCartItems(cartId);
+       cartService.clearCart(cartId);
         return ResponseEntity.noContent().build();
+    }
+
+    @ExceptionHandler({NotFoundCartException.class, NotFoundProductException.class})
+    public ResponseEntity<ErrorDto> handleException(Exception e) {
+
+        return ResponseEntity.badRequest().body(new ErrorDto(e.getMessage()));
     }
 
 }
