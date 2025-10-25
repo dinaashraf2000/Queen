@@ -31,6 +31,7 @@ public class UserController {
 public List<UserDto> findAll(@RequestParam(required = false,defaultValue = " ") String sort) {
    return userService.findAll(sort);
   }
+
 @GetMapping("/{id}")
 public ResponseEntity<UserDto> getUser(@PathVariable Long id){
 

@@ -61,6 +61,8 @@ http.sessionManagement(c->c.sessionCreationPolicy(SessionCreationPolicy.STATELES
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(
                 c->c
+                        .requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/auth/refresh").permitAll()
                         .anyRequest().authenticated())
         .addFilterBefore(jwtAuthentiicationFilter, UsernamePasswordAuthenticationFilter.class)
         .exceptionHandling(c->

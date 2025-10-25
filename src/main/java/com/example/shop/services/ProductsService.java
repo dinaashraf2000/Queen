@@ -58,7 +58,7 @@ public class ProductsService {
 
         Byte categoryId = request.getCategoryId();
 
-        Category category = categoryRepository.findById(categoryId)
+        var category = categoryRepository.findById(categoryId)
                 .orElseThrow(NotFoundCategoryException::new);
         var product = productMapper.toEntity(request);
         product.setCategory(category);

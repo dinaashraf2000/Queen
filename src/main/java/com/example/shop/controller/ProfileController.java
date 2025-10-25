@@ -18,6 +18,7 @@ public class ProfileController {
     }
     @GetMapping
     public ResponseEntity<ProfileDto> getProfile() {
+
         return ResponseEntity.ok(profileService.getProfile());
     }
 }
