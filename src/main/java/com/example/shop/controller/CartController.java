@@ -1,16 +1,9 @@
-package com.example.shop.controler;
+package com.example.shop.controller;
 
 import com.example.shop.dtos.*;
-import com.example.shop.entities.Cart;
-import com.example.shop.entities.CartItem;
-import com.example.shop.exceptions.CartEmptyException;
 import com.example.shop.exceptions.NotFoundCartException;
 import com.example.shop.exceptions.NotFoundProductException;
-import com.example.shop.mappers.CartMapper;
-import com.example.shop.repositories.CartRepository;
-import com.example.shop.repositories.ProductRepository;
 import com.example.shop.services.CartService;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Map;
 import java.util.UUID;
 
 @RestController

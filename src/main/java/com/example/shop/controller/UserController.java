@@ -1,7 +1,7 @@
-package com.example.shop.controler;
+package com.example.shop.controller;
 
 import com.example.shop.dtos.*;
-import com.example.shop.entities.Role;
+import com.example.shop.exceptions.NotAdminException;
 import com.example.shop.exceptions.UserNotFoundException;
 import com.example.shop.exceptions.WrongPasswordException;
 import com.example.shop.mappers.UserMapper;
@@ -10,17 +10,13 @@ import com.example.shop.services.AuthService;
 import com.example.shop.services.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.nio.file.AccessDeniedException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -32,7 +28,7 @@ public class UserController {
     private final AuthService authService;
     private final UserService userService;
   @GetMapping
-public Iterable<UserDto> findAll(@RequestParam(required = false,defaultValue = " ") String sort) {
+public List<UserDto> findAll(@RequestParam(required = false,defaultValue = " ") String sort) {
    return userService.findAll(sort);
   }
 @GetMapping("/{id}")
@@ -44,7 +40,6 @@ public ResponseEntity<UserDto> getUser(@PathVariable Long id){
 @PostMapping
 public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterUserRequest request
         , UriComponentsBuilder uriBuilder){
-
       var password= passwordEncoder.encode(request.getPassword());
       var userDto = userService.registerUser(request,password);
     var uri=  uriBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();
@@ -80,7 +75,7 @@ public ResponseEntity<Void> changePassword
         return ResponseEntity.badRequest()
                 .body(new ErrorDto(e.getMessage()));
     }
-    @ExceptionHandler({WrongPasswordException.class})
+    @ExceptionHandler({WrongPasswordException.class, NotAdminException.class})
     public ResponseEntity<ErrorDto> WrongPasswordException(Exception e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorDto(e.getMessage()));

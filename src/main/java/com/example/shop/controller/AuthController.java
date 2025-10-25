@@ -1,4 +1,4 @@
-package com.example.shop.controler;
+package com.example.shop.controller;
 
 import com.example.shop.config.JwtConfig;
 import com.example.shop.dtos.JwtResponce;

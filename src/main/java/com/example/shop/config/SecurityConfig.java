@@ -60,13 +60,7 @@ return config.getAuthenticationManager();
 http.sessionManagement(c->c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(
-                c->c.requestMatchers("/carts/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
-                        .requestMatchers(HttpMethod.POST,"/users").permitAll()
-                        .requestMatchers("/users/**").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/auth/refresh").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/orders/**").permitAll()
+                c->c
                         .anyRequest().authenticated())
         .addFilterBefore(jwtAuthentiicationFilter, UsernamePasswordAuthenticationFilter.class)
         .exceptionHandling(c->

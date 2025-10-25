@@ -1,13 +1,9 @@
-package com.example.shop.controler;
+package com.example.shop.controller;
 
 import com.example.shop.dtos.ErrorDto;
 import com.example.shop.dtos.OrderDto;
-import com.example.shop.entities.Order;
-import com.example.shop.exceptions.NotFoundCartException;
-import com.example.shop.exceptions.NotFoundProductException;
 import com.example.shop.exceptions.OrderNotFoundException;
 import com.example.shop.mappers.OrderMapper;
-import com.example.shop.repositories.CartRepository;
 import com.example.shop.repositories.OrderRepository;
 import com.example.shop.services.AuthService;
 import com.example.shop.services.OrderServies;
@@ -18,12 +14,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("/orders")
-public class OrderController {
+public class OrdersController {
     private final OrderServies orderServies;
     private final OrderRepository orderRepository;
     private final AuthService authService;

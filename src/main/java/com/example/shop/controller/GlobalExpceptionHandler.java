@@ -1,4 +1,4 @@
-package com.example.shop.controler;
+package com.example.shop.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

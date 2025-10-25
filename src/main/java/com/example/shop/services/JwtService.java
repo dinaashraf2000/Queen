@@ -50,6 +50,9 @@ public class JwtService {
     public Long getUserIdFromToken(String token){
         return Long.valueOf(getClaims(token).getSubject());
     }
+    public Role getRoleFromToken(String token){
+        return Role.valueOf(getClaims(token).get("role", String.class));
+    }
     private Claims getClaims(String token){
         return Jwts.parser()
                 .verifyWith(Keys.hmacShaKeyFor(jwtConfig.getSecret().getBytes()))
@@ -57,7 +60,5 @@ public class JwtService {
                 .parseSignedClaims(token)
                 .getPayload();
     }
-public Role getRoleFromToken(String token){
-    return Role.valueOf(getClaims(token).get("role", String.class));
-}
+
 }

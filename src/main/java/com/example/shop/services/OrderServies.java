@@ -23,6 +23,7 @@ public class OrderServies {
 
         return order.stream().map(orderMapper::toDto).toList();
     }
+
     public OrderDto getOrderById(Long id) {
         var order = orderRepository.findById(id).orElseThrow(OrderNotFoundException::new);
 

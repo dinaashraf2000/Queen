@@ -1,4 +1,4 @@
-package com.example.shop.controler;
+package com.example.shop.controller;
 
 import com.example.shop.dtos.CheckoutRequest;
 import com.example.shop.dtos.CheckoutResponce;
@@ -7,7 +7,6 @@ import com.example.shop.exceptions.CartEmptyException;
 import com.example.shop.exceptions.NotFoundCartException;
 import com.example.shop.services.CartService;
 import com.example.shop.services.CheckoutService;
-import com.stripe.exception.StripeException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

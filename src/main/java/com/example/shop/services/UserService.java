@@ -5,6 +5,7 @@ import com.example.shop.dtos.RegisterUserRequest;
 import com.example.shop.dtos.UpdateUserRequest;
 import com.example.shop.dtos.UserDto;
 import com.example.shop.entities.Role;
+import com.example.shop.exceptions.NotAdminException;
 import com.example.shop.exceptions.UserNotFoundException;
 import com.example.shop.exceptions.WrongPasswordException;
 import com.example.shop.mappers.UserMapper;
@@ -21,13 +22,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Collections;
+import java.util.List;
 
 @AllArgsConstructor
 @Service
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-
+    private final AuthService authService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -38,9 +40,13 @@ public class UserService implements UserDetailsService {
                 Collections.emptyList());
     }
 
-    public Iterable<UserDto> findAll(String sort) {
+    public List<UserDto> findAll(String sort) {
         if(!sort.equals("name") && !sort.equals("email")){
             sort = "name";
+        }
+        var role = authService.getRole();
+        if(role != Role.ADMIN){
+            throw new NotAdminException();
         }
         return userRepository.findAll(Sort.by(sort))
                 .stream()
@@ -48,14 +54,18 @@ public class UserService implements UserDetailsService {
                 .toList();
     }
 
-    public UserDto getUser( Long id){
-        var user= userRepository.findById(id).orElse(null);
-        if(user!=null){
+    public UserDto getUser(Long id){
+        var user = userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("User not found")
+        );
+        var role = authService.getRole();
+        if(role != Role.ADMIN){
+            throw new NotAdminException();
+        }
+
             return userMapper.toDto(user);
-        }
-        else {
-            throw new UserNotFoundException("User not found");
-        }
+
+
     }
     public  UserDto registerUser( RegisterUserRequest request,
                                   String password){
@@ -65,27 +75,29 @@ public class UserService implements UserDetailsService {
         var user = userMapper.toEntity(request);
         user.setPassword(password);
         user.setRole(Role.USER);
-        userRepository.save(user);
-        var userDto = userMapper.toDto(user);
+       var savedUser= userRepository.save(user);
+
+            var userDto = userMapper.toDto(savedUser);
+
         return  userDto;
 
     }
     public UserDto updateUser(@RequestBody UpdateUserRequest request, @PathVariable(name = "id") Long id){
 
-        var user= userRepository.findById(id).orElse(null);
-        if(user==null) {
-          throw  new UserNotFoundException("User not found");
-        }
-        userMapper.updateUser(request, user);
-        userRepository.save(user);
 
-        return userMapper.toDto(user);
+        var user = userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("User not found")
+        );
+
+      userMapper.updateUser(request, user);
+      var savedUser = userRepository.save(user);
+
+        return userMapper.toDto(savedUser);
     }
     public void deleteUser(@PathVariable(name = "id") Long id){
-        var user= userRepository.findById(id).orElse(null);
-        if(user==null) {
-            throw new UserNotFoundException("User not found");
-        }
+        var user = userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("User not found")
+        );
         userRepository.delete(user);
 
     }

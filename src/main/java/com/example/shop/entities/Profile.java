@@ -17,11 +17,11 @@ public class Profile {
     private Long id;
 
     @MapsId
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne
     @JoinColumn(name = "id")
     private User users;
 
-    @Lob
+
     @Column(name = "bio")
     private String bio;
 
@@ -31,7 +31,7 @@ public class Profile {
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
-    @Column(name = "loyalty_points", columnDefinition = "int UNSIGNED")
+    @Column(name = "loyalty_points")
     private Long loyaltyPoints;
 
 }
