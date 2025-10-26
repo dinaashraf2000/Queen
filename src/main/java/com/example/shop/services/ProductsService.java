@@ -60,9 +60,13 @@ public class ProductsService {
 
         var category = categoryRepository.findById(categoryId)
                 .orElseThrow(NotFoundCategoryException::new);
+
         var product = productMapper.toEntity(request);
+
         product.setCategory(category);
+
         var savedProduct=productRepository.save(product);
+
         return  productMapper.toDto(savedProduct);
 
     }

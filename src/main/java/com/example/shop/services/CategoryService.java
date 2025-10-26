@@ -34,10 +34,10 @@ public class CategoryService {
     public CategoryDto createCategory(CategoryRequest request) {
 
         var role = authService.getRole();
+
         if(role != Role.ADMIN){
             throw new NotAdminException();
         }
-
         var category = categoryMapper.toEntity(request);
 
         var savedCategory = categoryRepository.save(category);

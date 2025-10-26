@@ -63,6 +63,7 @@ http.sessionManagement(c->c.sessionCreationPolicy(SessionCreationPolicy.STATELES
                 c->c
                         .requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST,"/auth/refresh").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
                         .anyRequest().authenticated())
         .addFilterBefore(jwtAuthentiicationFilter, UsernamePasswordAuthenticationFilter.class)
         .exceptionHandling(c->

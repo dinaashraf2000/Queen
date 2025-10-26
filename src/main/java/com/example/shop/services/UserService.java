@@ -77,9 +77,9 @@ public class UserService implements UserDetailsService {
         user.setRole(Role.USER);
        var savedUser= userRepository.save(user);
 
-            var userDto = userMapper.toDto(savedUser);
+            return userMapper.toDto(savedUser);
 
-        return  userDto;
+
 
     }
     public UserDto updateUser(@RequestBody UpdateUserRequest request, @PathVariable(name = "id") Long id){
