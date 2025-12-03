@@ -1,4 +1,4 @@
-package com.example.shop.dtos;
+package com.example.shop.payment;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

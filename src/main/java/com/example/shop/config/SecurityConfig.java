@@ -35,15 +35,11 @@ import java.nio.file.AccessDeniedException;
 public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final JwtAuthentiicationFilter jwtAuthentiicationFilter;
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-
-        return new BCryptPasswordEncoder();
-    }
+  private final PasswordEncoder passwordEncoder;
     @Bean
 public AuthenticationProvider authenticationProvider() {
    var provider = new DaoAuthenticationProvider();
-   provider.setPasswordEncoder(passwordEncoder());
+   provider.setPasswordEncoder(passwordEncoder);
    provider.setUserDetailsService(userDetailsService);
    return provider;
 }
@@ -61,10 +57,10 @@ http.sessionManagement(c->c.sessionCreationPolicy(SessionCreationPolicy.STATELES
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(
                 c->c
-                        .requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/auth/refresh").permitAll()
+                        .requestMatchers("/auth/login").permitAll()
+                        .requestMatchers("/auth/refresh").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
         .addFilterBefore(jwtAuthentiicationFilter, UsernamePasswordAuthenticationFilter.class)
         .exceptionHandling(c->
         {c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))

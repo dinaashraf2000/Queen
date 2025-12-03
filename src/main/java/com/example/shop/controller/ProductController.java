@@ -48,14 +48,5 @@ public ResponseEntity<ProductDto> UpdateProduct(@RequestBody RegisterProdectRequ
     var productDto = productsService.UpdateProduct(request,id);
 return ResponseEntity.ok(productDto);
 }
-    @ExceptionHandler({NotFoundProductException.class})
-    public ResponseEntity<ErrorDto> NotFoundProductException(Exception e) {
-        return ResponseEntity.badRequest()
-                .body(new ErrorDto(e.getMessage()));
-    }
-    @ExceptionHandler({NotAdminException.class})
-    public ResponseEntity<ErrorDto> NotAdminException(Exception e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorDto(e.getMessage()));
-    }
+
 }

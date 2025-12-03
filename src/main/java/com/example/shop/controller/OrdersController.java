@@ -36,14 +36,5 @@ public class OrdersController {
         return ResponseEntity.ok(order);
     }
 
-    @ExceptionHandler({OrderNotFoundException.class})
-    public ResponseEntity<Void> handleOrderNotFoundException() {
 
-        return ResponseEntity.notFound().build();
-    }
-    @ExceptionHandler({AccessDeniedException.class})
-    public ResponseEntity<ErrorDto> AccessDeniedException(Exception e) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(new ErrorDto(e.getMessage()));
-    }
 }

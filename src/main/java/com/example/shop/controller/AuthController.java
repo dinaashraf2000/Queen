@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,20 +31,27 @@ private final JwtConfig jwtConfig;
 private final UserRepository userRepository;
 private final UserMapper userMapper;
 private final AuthService authService;
+private final PasswordEncoder passwordEncoder;
+
     @PostMapping("/login")
     public ResponseEntity<JwtResponce> login(@Valid @RequestBody LoginDto loginDto, HttpServletResponse response) {
 
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken
                 (loginDto.getEmail(), loginDto.getPassword()));
 var user=userRepository.findByEmail(loginDto.getEmail()).orElseThrow();
+        System.out.println(user);
            var accessToken = jwtService.generateAccessToken(user);
 var refreshToken = jwtService.generateFreshToken(user);
 var cookie=new Cookie("refreshToken", refreshToken);
 cookie.setPath("/auth/refresh");
 cookie.setHttpOnly(true);
-cookie.setSecure(true);
+cookie.setSecure(false);
 cookie.setMaxAge(jwtConfig.getRefreshTokenExpiration());
 response.addCookie(cookie);
+        System.out.println("Password matches? " +
+                passwordEncoder.matches(loginDto.getPassword(),
+                        userRepository.findByEmail(loginDto.getEmail()).get().getPassword()));
+
             return ResponseEntity.ok(new JwtResponce(accessToken));
 
     }
@@ -70,11 +78,7 @@ return ResponseEntity.ok(new JwtResponce(accessToken));
         return ResponseEntity.ok(userDto);
 
      }
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<Void>handlebadrequest() {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-    }
         }
 
 

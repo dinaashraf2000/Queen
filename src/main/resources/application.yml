@@ -8,11 +8,11 @@ spring:
     refreshTokenExpiration: 604800
 
 profiles:
-  # هذا يحدد أن "dev" هو الافتراضي ما لم يتم تحديده يدوياً
   active: dev
 
 stripe:
   secretKey: ${STRIPE_SECRET_KEY}
+  webhookSwcretKey: ${STRIPE_WEBHOOK_SECRET_KEY}
 
 server:
   port: 8081

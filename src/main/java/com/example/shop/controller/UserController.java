@@ -43,7 +43,7 @@ public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterUserRequest re
         , UriComponentsBuilder uriBuilder){
       var password= passwordEncoder.encode(request.getPassword());
       var userDto = userService.registerUser(request,password);
-    var uri=  uriBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();
+    var uri= uriBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();
 
       return  ResponseEntity.created(uri).body(userDto);
 
@@ -71,14 +71,5 @@ public ResponseEntity<Void> changePassword
     return ResponseEntity.noContent().build();
 }
 
-    @ExceptionHandler({UserNotFoundException.class})
-    public ResponseEntity<ErrorDto> UserNotFoundException(Exception e) {
-        return ResponseEntity.badRequest()
-                .body(new ErrorDto(e.getMessage()));
-    }
-    @ExceptionHandler({WrongPasswordException.class, NotAdminException.class})
-    public ResponseEntity<ErrorDto> WrongPasswordException(Exception e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorDto(e.getMessage()));
-    }
+
  }

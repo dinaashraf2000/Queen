@@ -1,5 +1,6 @@
 package com.example.shop.services;
 
+import com.example.shop.annotations.AdminOnly;
 import com.example.shop.dtos.ProductDto;
 import com.example.shop.dtos.RegisterProdectRequest;
 import com.example.shop.entities.Category;
@@ -49,14 +50,9 @@ public class ProductsService {
                 .map(productMapper::toDto)
                 .toList();
     }
+    @AdminOnly
     public ProductDto CreateProduct(RegisterProdectRequest  request){
-        var role = authService.getRole();
-
-        if(role != Role.ADMIN){
-            throw new NotAdminException();
-        }
-
-        Byte categoryId = request.getCategoryId();
+        var categoryId = request.getCategoryId();
 
         var category = categoryRepository.findById(categoryId)
                 .orElseThrow(NotFoundCategoryException::new);
@@ -70,18 +66,18 @@ public class ProductsService {
         return  productMapper.toDto(savedProduct);
 
     }
+    @AdminOnly
     public ProductDto UpdateProduct(RegisterProdectRequest request, Long id){
-        var product = productRepository.findById(id).orElse(null);
-
-        if(product == null){
-            throw new NotFoundProductException();
-        }
-        var role = authService.getRole();
-        if(role != Role.ADMIN){
-            throw new NotAdminException();
-        }
+        var product = checkProduct(id);
         productMapper.updateproduct(request, product);
         var savedProduct= productRepository.save(product);
         return productMapper.toDto(savedProduct);
+    }
+    public Product checkProduct(Long productId) {
+        var product = productRepository.findById(productId).orElse(null);
+        if (product == null) {
+            throw new NotFoundProductException();
+        }
+        return product;
     }
 }

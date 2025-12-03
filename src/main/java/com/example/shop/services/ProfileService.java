@@ -1,5 +1,6 @@
 package com.example.shop.services;
 
+import com.example.shop.annotations.Authenticated;
 import com.example.shop.dtos.ProfileDto;
 import com.example.shop.dtos.ProfileRequste;
 import com.example.shop.entities.Profile;
@@ -18,12 +19,9 @@ public class ProfileService {
 private final AuthService authService;
 private final UserMapper userMapper;
 
+@Authenticated
     public ProfileDto createProfile(ProfileRequste request) {
         var user = authService.getCurrentUser();
-
-        if(user == null || user.getId() == null) {
-            throw new UserNotFoundException("User not found or ID is missing");
-        }
          var userDto= userMapper.toDto(user);
 
         var profile = profileMapper.toEntity(request);
@@ -38,11 +36,9 @@ private final UserMapper userMapper;
 
         return profileDto;
     }
+    @Authenticated
     public ProfileDto getProfile() {
         var user = authService.getCurrentUser();
-        if(user == null || user.getId() == null) {
-            throw new UserNotFoundException("User not found or ID is missing");
-        }
         Profile savedProfile = profileRepository.findById(user.getId())
                 .orElseThrow(() -> new UserNotFoundException("Profile not found "));
 

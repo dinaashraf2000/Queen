@@ -1,6 +1,5 @@
-package com.example.shop.dtos;
+package com.example.shop.payment;
 
-import com.stripe.exception.StripeException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -8,6 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class CheckoutResponce {
 private long orderId;
-
-
+private String url;
 }

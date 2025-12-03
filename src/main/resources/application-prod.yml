@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL} # استخدام متغير البيئة (جيد للإنتاج)
+    url: ${SPRING_DATASOURCE_URL}
 
 
-  websiteUrl: https://Queen.com # ✅ وضع الخاصية في المكان الصحيح
+  websiteUrl: https://Queen.com

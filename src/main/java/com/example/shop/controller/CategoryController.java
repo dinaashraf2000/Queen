@@ -27,9 +27,5 @@ return categoryService.findAllCategory();
 var category=categoryService.createCategory(request);
   return ResponseEntity.ok(category);
     }
-    @ExceptionHandler({NotAdminException.class})
-    public ResponseEntity<ErrorDto> NotAdminException(Exception e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorDto(e.getMessage()));
-    }
+
 }

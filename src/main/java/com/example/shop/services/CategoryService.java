@@ -1,5 +1,6 @@
 package com.example.shop.services;
 
+import com.example.shop.annotations.AdminOnly;
 import com.example.shop.dtos.*;
 import com.example.shop.entities.Category;
 import com.example.shop.entities.Product;
@@ -30,14 +31,8 @@ public class CategoryService {
                 .map(categoryMapper::toDto)
                 .toList();
     }
-
+    @AdminOnly
     public CategoryDto createCategory(CategoryRequest request) {
-
-        var role = authService.getRole();
-
-        if(role != Role.ADMIN){
-            throw new NotAdminException();
-        }
         var category = categoryMapper.toEntity(request);
 
         var savedCategory = categoryRepository.save(category);

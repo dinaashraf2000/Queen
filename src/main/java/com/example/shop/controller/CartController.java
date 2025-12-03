@@ -62,10 +62,5 @@ public ResponseEntity<Void> deleteCartItem(@PathVariable UUID cartId,@PathVariab
         return ResponseEntity.noContent().build();
     }
 
-    @ExceptionHandler({NotFoundCartException.class, NotFoundProductException.class})
-    public ResponseEntity<ErrorDto> handleException(Exception e) {
-
-        return ResponseEntity.badRequest().body(new ErrorDto(e.getMessage()));
-    }
 
 }

@@ -1,0 +1,17 @@
+
+<div class="product-list-container">
+  <h2>Our Products</h2>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <div class="product-grid" *ngIf="!errorMessage">
+    <div *ngFor="let product of products" class="product-card">
+      <div class="product-name">{{ product.name }}</div>
+      <div class="product-description">{{ product.description }}</div>
+      <div class="product-price">{{ product.price | currency:'USD' }}</div>
+      <button (click)="addToCart(product.id)">Add to Cart</button>
+    </div>
+  </div>
+</div>

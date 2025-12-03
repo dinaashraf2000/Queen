@@ -1,10 +1,13 @@
 package com.example.shop.services;
 
+import com.example.shop.annotations.AdminOnly;
+import com.example.shop.annotations.Authenticated;
 import com.example.shop.dtos.ChangePasswordRequest;
 import com.example.shop.dtos.RegisterUserRequest;
 import com.example.shop.dtos.UpdateUserRequest;
 import com.example.shop.dtos.UserDto;
 import com.example.shop.entities.Role;
+import com.example.shop.exceptions.CurentUserException;
 import com.example.shop.exceptions.NotAdminException;
 import com.example.shop.exceptions.UserNotFoundException;
 import com.example.shop.exceptions.WrongPasswordException;
@@ -29,8 +32,7 @@ import java.util.List;
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final AuthService authService;
-
+private final PasswordEncoder passwordEncoder;
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         var user=userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -39,30 +41,23 @@ public class UserService implements UserDetailsService {
                 user.getPassword(),
                 Collections.emptyList());
     }
-
+    @AdminOnly
+    @Authenticated
     public List<UserDto> findAll(String sort) {
         if(!sort.equals("name") && !sort.equals("email")){
             sort = "name";
-        }
-        var role = authService.getRole();
-        if(role != Role.ADMIN){
-            throw new NotAdminException();
         }
         return userRepository.findAll(Sort.by(sort))
                 .stream()
                 .map(userMapper::toDto )
                 .toList();
     }
-
+@AdminOnly
+@Authenticated
     public UserDto getUser(Long id){
         var user = userRepository.findById(id).orElseThrow(
                 () -> new UserNotFoundException("User not found")
         );
-        var role = authService.getRole();
-        if(role != Role.ADMIN){
-            throw new NotAdminException();
-        }
-
             return userMapper.toDto(user);
 
 
@@ -70,7 +65,7 @@ public class UserService implements UserDetailsService {
     public  UserDto registerUser( RegisterUserRequest request,
                                   String password){
         if(userRepository.existsByEmail(request.getEmail())){
-          throw new UserNotFoundException("Email already in use");
+          throw new CurentUserException("Email already in use");
         }
         var user = userMapper.toEntity(request);
         user.setPassword(password);
@@ -82,6 +77,7 @@ public class UserService implements UserDetailsService {
 
 
     }
+    @Authenticated
     public UserDto updateUser(@RequestBody UpdateUserRequest request, @PathVariable(name = "id") Long id){
 
 
@@ -101,15 +97,17 @@ public class UserService implements UserDetailsService {
         userRepository.delete(user);
 
     }
+@Authenticated
     public void changePassword( ChangePasswordRequest request,  Long id) throws WrongPasswordException {
         var user= userRepository.findById(id).orElse(null);
         if(user==null) {
             throw new UserNotFoundException("User not found");
         }
-        if(!user.getPassword().equals(request.getOldPassword())){
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
             throw new WrongPasswordException("Wrong Password");
         }
-        user.setPassword(request.getNewPassword());
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
 
         userRepository.save(user);
     }
